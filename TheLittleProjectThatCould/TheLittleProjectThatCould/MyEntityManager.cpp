@@ -166,14 +166,21 @@ MyEntityManager::~MyEntityManager(){Release();};
 // other methods
 void Simplex::MyEntityManager::Update(void)
 {
+	std::vector<int> remove;
 	//check collisions
 	for (uint i = 0; i < m_uEntityCount - 1; i++)
 	{
 		for (uint j = i + 1; j < m_uEntityCount; j++)
 		{
-			m_entityList[i]->IsColliding(m_entityList[j]);
+			if (m_entityList[i]->IsColliding(m_entityList[j]) && i == 0)
+				remove.push_back(j);
 		}
 	}
+	for (int i : remove) {
+		RemoveEntity(i);
+		
+	}
+
 }
 void Simplex::MyEntityManager::AddEntity(String a_sFileName, String a_sUniqueID)
 {

@@ -20,10 +20,12 @@ class Application
 	MyEntityManager* m_pEntityMngr = nullptr; //Entity Manager
 	vector3 m_v3Creeper; //position of the creeper
 	quaternion m_qCreeper; //orientation for the creeper
+
 		
 private:
-	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu"; //programmer
+	String m_sTeamName = "Alberto's A-Plus Students"; //programmer
 
+	int m_iScore = 0;
 	static ImGuiObject gui; //GUI object
 	bool m_bGUI_Main = true; //show Main GUI window?
 	bool m_bGUI_Console = true; //show Credits GUI window?
@@ -105,6 +107,7 @@ public:
 	*/
 	~Application(void);
 #pragma endregion
+
 
 private:
 #pragma region Initialization / Release

@@ -119,7 +119,7 @@ void Application::DrawGUI(void)
 {
 #pragma region Debugging Information
 	//Print info on the screen
-	uint nEmptyLines = 20;
+	uint nEmptyLines = 19;
 	for (uint i = 0; i < nEmptyLines; ++i)
 		m_pMeshMngr->PrintLine("");//Add a line on top
 	//m_pMeshMngr->Print("						");
@@ -133,6 +133,9 @@ void Application::DrawGUI(void)
 	//m_pMeshMngr->Print("						");
 	m_pMeshMngr->Print("FPS:");
 	m_pMeshMngr->PrintLine(std::to_string(m_pSystem->GetFPS()), C_RED);
+
+	m_pMeshMngr->Print("Score:");
+	m_pMeshMngr->PrintLine(std::to_string(m_iScore), C_RED);
 #pragma endregion
 
 	//Calculate the window size to know how to draw
@@ -148,22 +151,13 @@ void Application::DrawGUI(void)
 		String sAbout = m_pSystem->GetAppName() + " - About";
 		ImGui::Begin(sAbout.c_str(), (bool*)0, window_flags);
 		{
-			ImGui::Text("Programmer: \n");
-			ImGui::TextColored(v4Color, m_sProgrammer.c_str());
+			ImGui::Text("Team: \n");
+			ImGui::TextColored(v4Color, m_sTeamName.c_str());
 			ImGui::Text("FrameRate: %.2f [FPS] -> %.3f [ms/frame]\n",
 				ImGui::GetIO().Framerate, 1000.0f / ImGui::GetIO().Framerate);
 			ImGui::Text("Control:\n");
 			ImGui::Text("   WASD: Movement\n");
-			ImGui::Text("	 F1: Perspective\n");
-			ImGui::Text("	 F2: Orthographic X\n");
-			ImGui::Text("	 F3: Orthographic Y\n");
-			ImGui::Text("	 F4: Orthographic Z\n");
 			ImGui::Separator();
-			ImGui::Text("  Left: Move Creeper\n");
-			ImGui::Text(" Right: Move Creeper\n");
-			ImGui::Text("    Up: Move Creeper\n");
-			ImGui::Text("  Down: Move Creeper\n");
-			ImGui::Text(" Shift: Modify Up/Down\n");
 			ImGui::Separator();
 			ImGui::TextColored(ImColor(255, 255, 0), "Entity Manager\n");
 		}
