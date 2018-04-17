@@ -11,6 +11,7 @@ void Application::ProcessMouseMovement(sf::Event a_event)
 	if(!m_pSystem->IsWindowFullscreen() && !m_pSystem->IsWindowBorderless())
 		m_v3Mouse += vector3(-8.0f, -32.0f, 0.0f);
 	gui.io.MousePos = ImVec2(m_v3Mouse.x, m_v3Mouse.y);
+
 }
 void Application::ProcessMousePressed(sf::Event a_event)
 {
@@ -388,9 +389,13 @@ void Application::CameraRotation(float a_fSpeed)
 		fAngleX += fDeltaMouse * a_fSpeed;
 	}
 	//Change the Yaw and the Pitch of the camera
+	cameraAngle += fAngleY;
+
+
 	//m_pCameraMngr->ChangeYaw(fAngleY * 3.0f);
+		
 	//m_pCameraMngr->ChangePitch(-fAngleX * 3.0f);
-	m_qCreeper = m_qCreeper * glm::angleAxis(fAngleY * 3.0f, AXIS_Y);
+	//m_qCreeper = m_qCreeper * glm::angleAxis(fAngleY* 57.3f, AXIS_Y);
 
 	SetCursorPos(CenterX, CenterY);//Position the mouse in the center
 }
@@ -431,30 +436,36 @@ void Application::ProcessKeyboard(void)
 	//	m_pCameraMngr->MoveVertical(m_fMovementSpeed * fMultiplier);
 #pragma endregion
 	//move the creeper
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		m_v3Creeper.x += 0.1f;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+		vector3 temp = m_pCameraMngr->GetRightward();
+		temp.y = 0;
+		m_v3Creeper -= temp * 0.1f;
+		
+	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		m_v3Creeper.x -= 0.1f;
+	{
+		vector3 temp = m_pCameraMngr->GetRightward();
+		temp.y = 0;
+		m_v3Creeper += temp * 0.1f;
+	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
-		if (!m_bModifier)
-			m_v3Creeper.z += 0.1f;
-		else
-			m_v3Creeper.y += 0.1f;
+		vector3 temp = m_pCameraMngr->GetForward();
+		temp.y = 0;
+		m_v3Creeper += temp * 0.1f;
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 	{
-		if (!m_bModifier)
-			m_v3Creeper.z -= 0.1f;
-		else
-			m_v3Creeper.y -= 0.1f;
+		vector3 temp = m_pCameraMngr->GetForward();
+		temp.y = 0;
+		m_v3Creeper -= temp * 0.1f;
 	}
 
 	//Orient the creeper
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
+	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
 	{
 		if (m_bModifier)
 			m_qCreeper = m_qCreeper * glm::angleAxis(1.0f, AXIS_X);
@@ -478,7 +489,7 @@ void Application::ProcessKeyboard(void)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 	{
 		m_qCreeper = quaternion();
-	}
+	}*/
 }
 //Joystick
 void Application::ProcessJoystick(void)

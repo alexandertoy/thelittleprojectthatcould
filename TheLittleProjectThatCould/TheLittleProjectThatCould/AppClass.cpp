@@ -38,6 +38,11 @@ void Application::InitVariables(void)
 	//set the model matrix and visibility of the last entity added
 	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(-2.0f,-1.0f,-1.0f)));
 	m_pEntityMngr->SetAxisVisibility(true);
+
+	vector3 creeperPos = m_pEntityMngr->GetRigidBody("Creeper")->GetCenterGlobal();
+	vector3 cameraPos = creeperPos + vector3(0, 2, -5);
+	creeperPos.y += 1;
+	m_pCameraMngr->SetPositionTargetAndUp(cameraPos, creeperPos, AXIS_Y);
 }
 void Application::Update(void)
 {
@@ -51,22 +56,22 @@ void Application::Update(void)
 	CameraRotation();
 	
 	//Set model matrix to the creeper
-	matrix4 mCreeper = ToMatrix4(m_qCreeper) * ToMatrix4(m_qArcBall) * glm::translate(m_v3Creeper);
+	matrix4 mCreeper = glm::translate(m_v3Creeper) * ToMatrix4(m_qCreeper) * ToMatrix4(m_qArcBall);
 	m_pEntityMngr->SetModelMatrix(mCreeper, "Creeper");
 
 	//matrix4 cameraPos =  mCreeper * glm::translate(vector3(30.0f, 0, 0));
 	//m_pCameraMngr->SetPosition(vector3(cameraPos[0][3], cameraPos[1][3], cameraPos[2][3]));
-	
+
+	vector3 creeperPos = m_pEntityMngr->GetRigidBody("Creeper")->GetCenterGlobal();
+	float x = sin(cameraAngle);
+	float y = cos(cameraAngle);
+	vector3 cameraPos = creeperPos + vector3(-5 * (x), 2, -5 * (y));
+	creeperPos.y += 1;
+	m_pCameraMngr->SetPositionTargetAndUp(cameraPos, creeperPos, AXIS_Y);
 
 	//Set model matrix to Steve
 	matrix4 mSteve = glm::translate(vector3(2.5f, 0.0f, 0.0f)) * glm::rotate(IDENTITY_M4, -55.0f, AXIS_Z);
 	m_pEntityMngr->SetModelMatrix(mSteve, "Steve");
-
-
-
-	vector3 creeperPos = m_pEntityMngr->GetRigidBody("Creeper")->GetCenterGlobal();
-	vector3 cameraPos = vector3(mCreeper * vector4(0, 3, -5, 1));
-	m_pCameraMngr->SetPositionTargetAndUp(cameraPos, creeperPos, AXIS_Y);
 
 	//Move the last entity added slowly to the right
 	matrix4 lastMatrix = m_pEntityMngr->GetModelMatrix();// get the model matrix of the last added
