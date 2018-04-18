@@ -135,7 +135,7 @@ void Application::DrawGUI(void)
 	m_pMeshMngr->PrintLine(std::to_string(m_pSystem->GetFPS()), C_RED);
 
 	m_pMeshMngr->Print("Score:");
-	m_pMeshMngr->PrintLine(std::to_string(m_iScore), C_RED);
+	m_pMeshMngr->PrintLine(std::to_string(ScoreManager::GetScore()), C_RED);
 #pragma endregion
 
 	//Calculate the window size to know how to draw

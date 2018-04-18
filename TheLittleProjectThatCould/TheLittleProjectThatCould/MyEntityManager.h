@@ -7,6 +7,8 @@ Date: 2017/07
 
 #include "MyEntity.h"
 
+#include "ScoreManager.h"
+
 namespace Simplex
 {
 

@@ -2,11 +2,11 @@
 using namespace Simplex;
 void Application::InitVariables(void)
 {
-	//Set the position and target of the camera
-	m_pCameraMngr->SetPositionTargetAndUp(
-		vector3(0.0f, 0.0f, 13.0f), //Position
-		vector3(0.0f, 0.0f, 12.0f),	//Target
-		AXIS_Y);					//Up
+	////Set the position and target of the camera
+	//m_pCameraMngr->SetPositionTargetAndUp(
+	//	vector3(0.0f, 0.0f, 13.0f), //Position
+	//	vector3(0.0f, 0.0f, 12.0f),	//Target
+	//	AXIS_Y);					//Up
 
 	m_pLightMngr->SetPosition(vector3(0.0f, 3.0f, 13.0f), 1); //set the position of first light (0 is reserved for ambient light)
 	
@@ -17,27 +17,17 @@ void Application::InitVariables(void)
 	m_pEntityMngr->AddEntity("Minecraft\\Creeper.obj", "Creeper");
 	m_pEntityMngr->SetAxisVisibility(true, "Creeper"); //set visibility of the entity's axis
 
-	//steve
-	m_pEntityMngr->AddEntity("Minecraft\\Steve.obj", "Steve");
-	m_pEntityMngr->SetAxisVisibility(true, "Steve"); //set visibility of the entity's axis
-
-	//add an entity
-	m_pEntityMngr->AddEntity("Minecraft\\Cow.obj", "Cow");
-	//set the model matrix and visibility of the last entity added
-	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(2.0f,-1.5f,-1.0f)));
-	m_pEntityMngr->SetAxisVisibility(true);
-
-	//add an entity
-	m_pEntityMngr->AddEntity("Minecraft\\Zombie.obj", "Zombie");
-	//set the model matrix and visibility of the last entity added
-	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0.0f, -2.5f, 0.0f)));
-	m_pEntityMngr->SetAxisVisibility(true);
-
-	//add an entity
-	m_pEntityMngr->AddEntity("Minecraft\\Pig.obj", "Pig");
-	//set the model matrix and visibility of the last entity added
-	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(-2.0f,-1.0f,-1.0f)));
-	m_pEntityMngr->SetAxisVisibility(true);
+	for (int i = 0; i < 100; i++) {
+		//steve
+		m_pEntityMngr->AddEntity("Minecraft\\Steve.obj", "Steve");
+		m_pEntityMngr->SetAxisVisibility(true, "Steve"); //set visibility of the entity's axis
+														 //Set model matrix to Steve
+		matrix4 mSteve = glm::translate(vector3(rand()%100-50, 0, rand() % 100-50));
+		m_pEntityMngr->SetModelMatrix(mSteve);
+	}
+	
+	planeIdx = m_pMeshMngr->GeneratePlane(100.0f, vector3(0.0f, .5f, 0.0f));
+	planeMatrix = glm::translate(vector3(0.0f, 0.0f, 0.0f)) * ToMatrix4(glm::quat(vector3(-PI/2.0f, 0.0f, 0.0f)));
 
 	vector3 creeperPos = m_pEntityMngr->GetRigidBody("Creeper")->GetCenterGlobal();
 	vector3 cameraPos = creeperPos + vector3(0, 2, -5);
@@ -69,14 +59,12 @@ void Application::Update(void)
 	creeperPos.y += 1;
 	m_pCameraMngr->SetPositionTargetAndUp(cameraPos, creeperPos, AXIS_Y);
 
-	//Set model matrix to Steve
-	matrix4 mSteve = glm::translate(vector3(2.5f, 0.0f, 0.0f)) * glm::rotate(IDENTITY_M4, -55.0f, AXIS_Z);
-	m_pEntityMngr->SetModelMatrix(mSteve, "Steve");
+	m_pMeshMngr->AddMeshToRenderList(m_pMeshMngr->GetMesh(planeIdx), planeMatrix);
 
-	//Move the last entity added slowly to the right
-	matrix4 lastMatrix = m_pEntityMngr->GetModelMatrix();// get the model matrix of the last added
-	lastMatrix *= glm::translate(IDENTITY_M4, vector3(0.01f, 0.0f, 0.0f)); //translate it
-	m_pEntityMngr->SetModelMatrix(lastMatrix); //return it to its owner
+	////Move the last entity added slowly to the right
+	//matrix4 lastMatrix = m_pEntityMngr->GetModelMatrix();// get the model matrix of the last added
+	//lastMatrix *= glm::translate(IDENTITY_M4, vector3(0.01f, 0.0f, 0.0f)); //translate it
+	//m_pEntityMngr->SetModelMatrix(lastMatrix); //return it to its owner
 
 	//Update Entity Manager
 	m_pEntityMngr->Update();

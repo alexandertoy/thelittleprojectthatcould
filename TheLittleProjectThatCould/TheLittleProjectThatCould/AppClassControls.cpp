@@ -436,25 +436,15 @@ void Application::ProcessKeyboard(void)
 	//	m_pCameraMngr->MoveVertical(m_fMovementSpeed * fMultiplier);
 #pragma endregion
 	//move the creeper
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		vector3 temp = m_pCameraMngr->GetRightward();
-		temp.y = 0;
-		m_v3Creeper -= temp * 0.1f;
-		
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-	{
-		vector3 temp = m_pCameraMngr->GetRightward();
-		temp.y = 0;
-		m_v3Creeper += temp * 0.1f;
-	}
-
+	float angle = 0;
+	float count = 0;
+	bool forward = true;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
 		vector3 temp = m_pCameraMngr->GetForward();
 		temp.y = 0;
 		m_v3Creeper += temp * 0.1f;
+		count++;
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
@@ -462,7 +452,34 @@ void Application::ProcessKeyboard(void)
 		vector3 temp = m_pCameraMngr->GetForward();
 		temp.y = 0;
 		m_v3Creeper -= temp * 0.1f;
+		angle += PI;
+		count++;
+		forward = false;
 	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+		vector3 temp = m_pCameraMngr->GetRightward();
+		temp.y = 0;
+		m_v3Creeper -= temp * 0.1f;
+		angle += PI / 2.0f;
+		count++;
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		vector3 temp = m_pCameraMngr->GetRightward();
+		temp.y = 0;
+		m_v3Creeper += temp * 0.1f;
+		if (!forward)
+			angle += 3.0f * PI / 2.0f;
+		else
+			angle -= PI / 2.0f;
+		count++;
+	}
+
+
+	if(count !=0)
+		m_qCreeper = glm::quat(vector3(0.0f, angle/count + cameraAngle, 0.0f));
+
 
 	//Orient the creeper
 	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))

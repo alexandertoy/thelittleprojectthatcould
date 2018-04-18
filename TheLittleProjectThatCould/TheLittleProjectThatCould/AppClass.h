@@ -12,6 +12,8 @@ Date: 2017/06
 
 #include "MyEntityManager.h"
 
+#include "ScoreManager.h"
+
 namespace Simplex
 {
 	//Adding Application to the Simplex namespace
@@ -20,7 +22,6 @@ class Application
 	MyEntityManager* m_pEntityMngr = nullptr; //Entity Manager
 	vector3 m_v3Creeper; //position of the creeper
 	quaternion m_qCreeper; //orientation for the creeper
-
 		
 private:
 	String m_sTeamName = "Alberto's A-Plus Students"; //programmer
@@ -60,8 +61,11 @@ private:
 	sf::Sound m_sound; //sound effect
 	sf::Music m_soundBGM; //background music
 
-
+	int planeIdx;
+	matrix4 planeMatrix;
 	float cameraAngle = 0;
+	float m_fCreeperAngle;
+
 
 
 public:

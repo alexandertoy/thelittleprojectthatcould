@@ -178,6 +178,8 @@ void Simplex::MyEntityManager::Update(void)
 	}
 	for (int i : remove) {
 		RemoveEntity(i);
+		ScoreManager::IncreaseScore(1);
+		m_entityList[0]->GetRigidBody()->ClearCollidingList();
 		
 	}
 
