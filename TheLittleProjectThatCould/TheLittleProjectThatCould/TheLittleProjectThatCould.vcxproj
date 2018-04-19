@@ -143,10 +143,7 @@
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)_Binary\"
-copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)_Binary"
-mkdir "$(SolutionDir)_Binary\Shaders\"
-copy"$(SolutionDir)include\OpenGL-Tutorials\shaders\*.*" "$(SolutionDir)_Binary\Shaders\"
-copy "$(SolutionDir)include\GL\bin\*.*" "$(SolutionDir)_Binary\"</Command>
+copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)_Binary"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -184,10 +181,7 @@ copy "$(SolutionDir)include\GL\bin\*.*" "$(SolutionDir)_Binary\"</Command>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(SolutionDir)_Binary\"
-copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)_Binary"
-mkdir "$(SolutionDir)_Binary\Shaders\"
-copy"$(SolutionDir)include\OpenGL-Tutorials\shaders\*.*" "$(SolutionDir)_Binary\Shaders\"
-copy "$(SolutionDir)include\GL\bin\*.*" "$(SolutionDir)_Binary\"</Command>
+copy "$(OutDir)$(TargetName)$(TargetExt)" "$(SolutionDir)_Binary"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
