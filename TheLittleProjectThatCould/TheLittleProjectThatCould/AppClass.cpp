@@ -18,10 +18,8 @@ void Application::InitVariables(void)
 	m_pEntityMngr->SetAxisVisibility(true, "Creeper"); //set visibility of the entity's axis
 
 	for (int i = 0; i < 100; i++) {
-		//steve
-		m_pEntityMngr->AddEntity("Minecraft\\Steve.obj", "Steve");
-		m_pEntityMngr->SetAxisVisibility(true, "Steve"); //set visibility of the entity's axis
-														 //Set model matrix to Steve
+		//TODO make this work with the tree obj
+		m_pEntityMngr->AddEntity("Minecraft\\Cube.obj", "Steve");
 		matrix4 mSteve = glm::translate(vector3(rand()%100-50, 0, rand() % 100-50));
 		m_pEntityMngr->SetModelMatrix(mSteve);
 	}
