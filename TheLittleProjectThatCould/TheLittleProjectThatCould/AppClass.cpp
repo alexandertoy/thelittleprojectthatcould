@@ -14,14 +14,16 @@ void Application::InitVariables(void)
 	m_pEntityMngr = MyEntityManager::GetInstance();
 
 	//creeper
-	m_pEntityMngr->AddEntity("Minecraft\\Creeper.obj", "Creeper");
+	m_pEntityMngr->AddEntity("Minecraft\\Creeper.obj", Tag::Player, "Creeper");
 	m_pEntityMngr->SetAxisVisibility(true, "Creeper"); //set visibility of the entity's axis
+	m_pEntityMngr->UsePhysicsSolver();
 
 	for (int i = 0; i < 100; i++) {
 		//TODO make this work with the tree obj
-		m_pEntityMngr->AddEntity("Minecraft\\Cube.obj", "Steve");
+		m_pEntityMngr->AddEntity("Minecraft\\Steve.obj", Tag::Passenger, "Steve");
 		matrix4 mSteve = glm::translate(vector3(rand() % 100 - 50, 0, rand() % 100 - 50));
 		m_pEntityMngr->SetModelMatrix(mSteve);
+		m_pEntityMngr->UsePhysicsSolver();
 	}
 
 	planeIdx = m_pMeshMngr->GeneratePlane(100.0f, vector3(0.0f, .5f, 0.0f));
@@ -49,13 +51,16 @@ void Application::Update(void)
 	//Is the first person camera active?
 	CameraRotation();
 
-	//Set model matrix to the creeper
-	matrix4 mCreeper = glm::translate(m_v3Creeper) * ToMatrix4(m_qCreeper) * ToMatrix4(m_qArcBall);
+	//Update Entity Manager
+	m_pEntityMngr->Update();
+
+	//update things for the creeper (rotation and dimensions)
+	matrix4 mCreeper = m_pEntityMngr->GetModelMatrix("Creeper") * ToMatrix4(m_qCreeper) * ToMatrix4(m_qArcBall);
 	m_pEntityMngr->SetModelMatrix(mCreeper, "Creeper");
+	m_pRoot->UpdateIdForEntity(m_pEntityMngr->GetEntityIndex("Creeper"));
 
-	//matrix4 cameraPos =  mCreeper * glm::translate(vector3(30.0f, 0, 0));
-	//m_pCameraMngr->SetPosition(vector3(cameraPos[0][3], cameraPos[1][3], cameraPos[2][3]));
 
+	//rotate camera around creeper
 	vector3 creeperPos = m_pEntityMngr->GetRigidBody("Creeper")->GetCenterGlobal();
 	float x = sin(cameraAngle);
 	float y = cos(cameraAngle);
@@ -63,20 +68,12 @@ void Application::Update(void)
 	creeperPos.y += 1;
 	m_pCameraMngr->SetPositionTargetAndUp(cameraPos, creeperPos, AXIS_Y);
 
-	m_pMeshMngr->AddMeshToRenderList(m_pMeshMngr->GetMesh(planeIdx), planeMatrix);
-
-	m_pRoot->UpdateIdForEntity(m_pEntityMngr->GetEntityIndex("Creeper"));
-
-	////Move the last entity added slowly to the right
-	//matrix4 lastMatrix = m_pEntityMngr->GetModelMatrix();// get the model matrix of the last added
-	//lastMatrix *= glm::translate(IDENTITY_M4, vector3(0.01f, 0.0f, 0.0f)); //translate it
-	//m_pEntityMngr->SetModelMatrix(lastMatrix); //return it to its owner
-
-	//Update Entity Manager
-	m_pEntityMngr->Update();
-
 	//Add objects to render list
 	m_pEntityMngr->AddEntityToRenderList(-1, true);
+	m_pMeshMngr->AddMeshToRenderList(m_pMeshMngr->GetMesh(planeIdx), planeMatrix);
+
+
+
 }
 void Application::Display(void)
 {

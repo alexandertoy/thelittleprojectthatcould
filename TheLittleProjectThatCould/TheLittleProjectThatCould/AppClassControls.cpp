@@ -50,42 +50,6 @@ void Application::ProcessMouseReleased(sf::Event a_event)
 		gui.m_bMousePressed[2] = false;
 		m_bFPC = false;
 		break;
-	case sf::Keyboard::PageUp:
-		++m_uOctantID;
-
-		if (m_uOctantID >= m_pRoot->GetOctantCount())
-			m_uOctantID = -1;
-
-		break;
-	case sf::Keyboard::PageDown:
-		--m_uOctantID;
-
-		if (m_uOctantID >= m_pRoot->GetOctantCount())
-			m_uOctantID = -1;
-
-		break;
-	case sf::Keyboard::Add:
-		if (m_uOctantLevels < 4)
-		{
-			m_pEntityMngr->ClearDimensionSetAll();
-			++m_uOctantLevels;
-
-			SafeDelete(m_pRoot);
-			m_pRoot = new MyOctant(m_uOctantLevels, 5);
-
-		}
-		break;
-	case sf::Keyboard::Subtract:
-		if (m_uOctantLevels > 0)
-		{
-			m_pEntityMngr->ClearDimensionSetAll();
-			--m_uOctantLevels;
-
-			SafeDelete(m_pRoot);
-			m_pRoot = new MyOctant(m_uOctantLevels, 5);
-
-		}
-		break;
 	}
 
 
@@ -110,7 +74,7 @@ void Application::ProcessKeyPressed(sf::Event a_event)
 	{
 	default: break;
 	case sf::Keyboard::Space:
-		m_sound.play();
+		m_pEntityMngr->ApplyForce(vector3(0.0f, 1.0f, 0.0f), "Creeper");
 		break;
 	case sf::Keyboard::LShift:
 	case sf::Keyboard::RShift:
@@ -149,30 +113,40 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 		bFPSControl = !bFPSControl;
 		m_pCameraMngr->SetFPS(bFPSControl);
 		break;
+	case sf::Keyboard::PageUp:
+		++m_uOctantID;
+
+		if (m_uOctantID >= m_pRoot->GetOctantCount())
+			m_uOctantID = -1;
+
+		break;
+	case sf::Keyboard::PageDown:
+		--m_uOctantID;
+
+		if (m_uOctantID >= m_pRoot->GetOctantCount())
+			m_uOctantID = -1;
+
+		break;
 	case sf::Keyboard::Add:
-		++m_uActCont;
-		m_uActCont %= 8;
-		if (m_uControllerCount > 0)
+		if (m_uOctantLevels < 4)
 		{
-			while (m_pController[m_uActCont]->uModel == SimplexController_NONE)
-			{
-				++m_uActCont;
-				m_uActCont %= 8;
-			}
+			m_pEntityMngr->ClearDimensionSetAll();
+			++m_uOctantLevels;
+
+			SafeDelete(m_pRoot);
+			m_pRoot = new MyOctant(m_uOctantLevels, 5);
+
 		}
 		break;
 	case sf::Keyboard::Subtract:
-		--m_uActCont;
-		if (m_uActCont > 7)
-			m_uActCont = 7;
-		if (m_uControllerCount > 0)
+		if (m_uOctantLevels > 0)
 		{
-			while (m_pController[m_uActCont]->uModel == SimplexController_NONE)
-			{
-				--m_uActCont;
-				if (m_uActCont > 7)
-					m_uActCont = 7;
-			}
+			m_pEntityMngr->ClearDimensionSetAll();
+			--m_uOctantLevels;
+
+			SafeDelete(m_pRoot);
+			m_pRoot = new MyOctant(m_uOctantLevels, 5);
+
 		}
 		break;
 	case sf::Keyboard::LShift:
@@ -475,12 +449,14 @@ void Application::ProcessKeyboard(void)
 	//move the creeper
 	float angle = 0;
 	float count = 0;
+	float fDelta = m_pSystem->GetDeltaTime(0);
+	vector3 force;
 	bool forward = true;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
 		vector3 temp = m_pCameraMngr->GetForward();
 		temp.y = 0;
-		m_v3Creeper += temp * 0.1f;
+		force += temp;
 		count++;
 	}
 
@@ -488,7 +464,7 @@ void Application::ProcessKeyboard(void)
 	{
 		vector3 temp = m_pCameraMngr->GetForward();
 		temp.y = 0;
-		m_v3Creeper -= temp * 0.1f;
+		force -= temp;
 		angle += PI;
 		count++;
 		forward = false;
@@ -496,7 +472,7 @@ void Application::ProcessKeyboard(void)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 		vector3 temp = m_pCameraMngr->GetRightward();
 		temp.y = 0;
-		m_v3Creeper -= temp * 0.1f;
+		force -= temp;
 		angle += PI / 2.0f;
 		count++;
 	}
@@ -505,7 +481,7 @@ void Application::ProcessKeyboard(void)
 	{
 		vector3 temp = m_pCameraMngr->GetRightward();
 		temp.y = 0;
-		m_v3Creeper += temp * 0.1f;
+		force += temp;
 		if (!forward)
 			angle += 3.0f * PI / 2.0f;
 		else
@@ -514,8 +490,10 @@ void Application::ProcessKeyboard(void)
 	}
 
 
-	if (count != 0)
+	if (count != 0) {
+		m_pEntityMngr->ApplyForce(force * fDelta, "Creeper");
 		m_qCreeper = glm::quat(vector3(0.0f, angle / count + cameraAngle, 0.0f));
+	}
 
 
 	//Orient the creeper

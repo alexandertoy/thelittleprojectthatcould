@@ -32,6 +32,7 @@
     <ClCompile Include="MyEntityManager.cpp" />
     <ClCompile Include="MyOctant.cpp" />
     <ClCompile Include="MyRigidBody.cpp" />
+    <ClCompile Include="MySolver.cpp" />
     <ClCompile Include="ScoreManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -47,6 +48,7 @@
     <ClInclude Include="MyEntityManager.h" />
     <ClInclude Include="MyOctant.h" />
     <ClInclude Include="MyRigidBody.h" />
+    <ClInclude Include="MySolver.h" />
     <ClInclude Include="ScoreManager.h" />
   </ItemGroup>
   <ItemGroup>

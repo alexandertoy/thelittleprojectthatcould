@@ -5,7 +5,8 @@ Date: 2017/07
 #ifndef __MYENTITY_H_
 #define __MYENTITY_H_
 
-#include "MyRigidBody.h"
+#include "MySolver.h"
+#include "Definitions.h"
 
 namespace Simplex
 {
@@ -28,6 +29,10 @@ namespace Simplex
 
 		static std::map<String, MyEntity*> m_IDMap; //a map of the unique ID's
 
+		bool m_bUsePhysicsSolver = false; //Indicates if we will use a physics solver 
+
+		MySolver* m_pSolver = nullptr; //Physics MySolver
+
 	public:
 		/*
 		Usage: Constructor that specifies the name attached to the MyEntity
@@ -36,7 +41,7 @@ namespace Simplex
 		-	String a_sUniqueID -> Name wanted as identifier, if not available will generate one
 		Output: class object instance
 		*/
-		MyEntity(String a_sFileName, String a_sUniqueID = "NA");
+		MyEntity(String a_sFileName, Tag a_nTag, String a_sUniqueID = "NA");
 		/*
 		Usage: Copy Constructor
 		Arguments: class object to copy
@@ -172,6 +177,98 @@ namespace Simplex
 		*/
 		void SortDimensions(void);
 
+		/*
+		USAGE: Gets the array of rigid bodies pointer this one is colliding with
+		ARGUMENTS: ---
+		OUTPUT: list of colliding rigid bodies
+		*/
+		MyRigidBody::PRigidBody* GetColliderArray(void);
+
+		/*
+		USAGE: Returns the number of objects colliding with this one
+		ARGUMENTS: ---
+		OUTPUT: colliding count
+		*/
+		uint GetCollidingCount(void);
+
+		/*
+		USAGE: Asks this MyEntity if this is the rigid body that belogs to it
+		ARGUMENTS: MyRigidBody* a_pRigidBody -> Queried Rigid Body
+		OUTPUT: is this your rigid body?
+		*/
+		bool HasThisRigidBody(MyRigidBody* a_pRigidBody);
+
+		/*
+		USAGE: Asks the entity to resolve the collision with the incoming one
+		ARGUMENTS: MyEntity* a_pOther -> Queried entity
+		OUTPUT: ---
+		*/
+		bool ResolveCollision(MyEntity* a_pOther);
+
+		/*
+		USAGE: Gets the solver applied to this MyEntity
+		ARGUMENTS: ---
+		OUTPUT: MySolver applied
+		*/
+		MySolver* GetSolver(void);
+		/*
+		USAGE: Applies a force to the solver
+		ARGUMENTS: vector3 a_v3Force -> force to apply
+		OUTPUT: ---
+		*/
+		void ApplyForce(vector3 a_v3Force);
+		/*
+		USAGE: Sets the position of the solver
+		ARGUMENTS: vector3 a_v3Position -> position to set
+		OUTPUT: ---
+		*/
+		void SetPosition(vector3 a_v3Position);
+		/*
+		USAGE: Gets the position of the solver
+		ARGUMENTS: ---
+		OUTPUT: position of the solver
+		*/
+		vector3 GetPosition(void);
+
+		/*
+		USAGE: Sets the velocity of the solver
+		ARGUMENTS: vector3 a_v3Velocity -> velocity to set
+		OUTPUT: ---
+		*/
+		void SetVelocity(vector3 a_v3Velocity);
+		/*
+		USAGE: Gets the velocity of the solver
+		ARGUMENTS: ---
+		OUTPUT: velocity of the solver
+		*/
+		vector3 GetVelocity(void);
+
+		/*
+		USAGE: Sets the mass of the solver
+		ARGUMENTS: float a_fMass -> mass to set
+		OUTPUT: ---
+		*/
+		void SetMass(float a_fMass);
+		/*
+		USAGE: Gets mass of the solver
+		ARGUMENTS: ---
+		OUTPUT: mass of the object
+		*/
+		float GetMass(void);
+
+		/*
+		USAGE: Updates the MyEntity
+		ARGUMENTS: ---
+		OUTPUT: ---
+		*/
+		void Update(void);
+		/*
+		USAGE: Resolves using physics solver or not in the update
+		ARGUMENTS: bool a_bUse = true -> using physics solver?
+		OUTPUT: ---
+		*/
+		void UsePhysicsSolver(bool a_bUse = true);
+
 	private:
 		/*
 		Usage: Deallocates member fields
@@ -186,9 +283,6 @@ namespace Simplex
 		*/
 		void Init(void);
 	};//class
-
-	  //EXPIMP_TEMPLATE template class SimplexDLL std::vector<MyEntity>;
-	EXPIMP_TEMPLATE template class SimplexDLL std::vector<MyEntity*>;
 
 } //namespace Simplex
 

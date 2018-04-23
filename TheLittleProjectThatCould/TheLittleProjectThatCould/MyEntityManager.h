@@ -43,7 +43,7 @@ namespace Simplex
 		-	String a_sUniqueID -> Name wanted as identifier, if not available will generate one
 		OUTPUT: ---
 		*/
-		void AddEntity(String a_sFileName, String a_sUniqueID = "NA");
+		void AddEntity(String a_sFileName, Tag a_nTag, String a_sUniqueID = "NA");
 		/*
 		USAGE: Deletes the MyEntity Specified by unique ID and removes it from the list
 		ARGUMENTS: uint a_uIndex -> index of the queried entry, if < 0 asks for the last one added
@@ -246,6 +246,71 @@ namespace Simplex
 		OUTPUT: MyEntity count
 		*/
 		uint GetEntityCount(void);
+
+		/*
+		USAGE: applies a force to the specified object
+		ARGUMENTS:
+		-	vector3 a_v3Force -> force to apply
+		-	String a_sUniqueID -> ID of the MyEntity
+		OUTPUT: ---
+		*/
+		void ApplyForce(vector3 a_v3Force, String a_sUniqueID);
+		/*
+		USAGE: applies a force to the specified entity
+		ARGUMENTS:
+		-	vector3 a_v3Force -> force to apply
+		-	uint a_uIndex = -1 -> ID of the MyEntity if < 0 last object added
+		OUTPUT: ---
+		*/
+		void ApplyForce(vector3 a_v3Force, uint a_uIndex = -1);
+		/*
+		USAGE: Sets the position of the specified entity
+		ARGUMENTS:
+		-	vector3 a_v3Position -> position to set
+		-	String a_sUniqueID -> ID of the MyEntity
+		OUTPUT: ---
+		*/
+		void SetPosition(vector3 a_v3Position, String a_sUniqueID);
+		/*
+		USAGE: Sets the position of the specified entity
+		ARGUMENTS:
+		-	vector3 a_v3Position -> position to set
+		-	uint a_uIndex = -1 -> ID of the MyEntity if < 0 last object added
+		OUTPUT: ---
+		*/
+		void SetPosition(vector3 a_v3Position, uint a_uIndex = -1);
+		/*
+		USAGE: Sets the mass of the specified entity
+		ARGUMENTS:
+		-	float a_fMass -> mass to set
+		-	String a_sUniqueID -> ID of the MyEntity
+		OUTPUT: ---
+		*/
+		void SetMass(float a_fMass, String a_sUniqueID);
+		/*
+		USAGE: Sets the mass of the specified entity
+		ARGUMENTS:
+		-	float a_fMass -> mass to set
+		-	uint a_uIndex = -1 -> ID of the MyEntity if < 0 last object added
+		OUTPUT: ---
+		*/
+		void SetMass(float a_v3Position, uint a_uIndex = -1);
+		/*
+		USAGE: Sets the using physics solver flag for the specified object
+		ARGUMENTS:
+		-	bool a_bUse -> Using physics?
+		-	String a_sUniqueID -> ID of the MyEntity
+		OUTPUT: ---
+		*/
+		void UsePhysicsSolver(bool a_bUse, String a_sUniqueID);
+		/*
+		USAGE: Sets the using physics solver flag for the specified object
+		ARGUMENTS:
+		-	bool a_bUse -> Using physics?
+		-	uint a_uIndex = -1 -> ID of the MyEntity if < 0 last object added
+		OUTPUT: ---
+		*/
+		void UsePhysicsSolver(bool a_bUse = true, uint a_uIndex = -1);
 	private:
 		/*
 		Usage: constructor
