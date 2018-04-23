@@ -13,6 +13,7 @@ Date: 2017/06
 #include "MyEntityManager.h"
 
 #include "ScoreManager.h"
+#include "MyOctant.h"
 
 namespace Simplex
 {
@@ -22,6 +23,11 @@ class Application
 	MyEntityManager* m_pEntityMngr = nullptr; //Entity Manager
 	vector3 m_v3Creeper; //position of the creeper
 	quaternion m_qCreeper; //orientation for the creeper
+
+	uint m_uOctantID = -1; //Index of Octant to display
+	uint m_uObjects = 0; //Number of objects in the scene
+	uint m_uOctantLevels = 0; //Number of levels in the octree
+	MyOctant* m_pRoot = nullptr;//Root of the octree
 		
 private:
 	String m_sTeamName = "Alberto's A-Plus Students"; //programmer

@@ -8,7 +8,7 @@ void Application::ProcessMouseMovement(sf::Event a_event)
 	sf::Vector2i window = m_pWindow->getPosition();
 	m_v3Mouse.x = static_cast<float>(mouse.x - window.x);
 	m_v3Mouse.y = static_cast<float>(mouse.y - window.y);
-	if(!m_pSystem->IsWindowFullscreen() && !m_pSystem->IsWindowBorderless())
+	if (!m_pSystem->IsWindowFullscreen() && !m_pSystem->IsWindowBorderless())
 		m_v3Mouse += vector3(-8.0f, -32.0f, 0.0f);
 	gui.io.MousePos = ImVec2(m_v3Mouse.x, m_v3Mouse.y);
 
@@ -50,7 +50,44 @@ void Application::ProcessMouseReleased(sf::Event a_event)
 		gui.m_bMousePressed[2] = false;
 		m_bFPC = false;
 		break;
+	case sf::Keyboard::PageUp:
+		++m_uOctantID;
+
+		if (m_uOctantID >= m_pRoot->GetOctantCount())
+			m_uOctantID = -1;
+
+		break;
+	case sf::Keyboard::PageDown:
+		--m_uOctantID;
+
+		if (m_uOctantID >= m_pRoot->GetOctantCount())
+			m_uOctantID = -1;
+
+		break;
+	case sf::Keyboard::Add:
+		if (m_uOctantLevels < 4)
+		{
+			m_pEntityMngr->ClearDimensionSetAll();
+			++m_uOctantLevels;
+
+			SafeDelete(m_pRoot);
+			m_pRoot = new MyOctant(m_uOctantLevels, 5);
+
+		}
+		break;
+	case sf::Keyboard::Subtract:
+		if (m_uOctantLevels > 0)
+		{
+			m_pEntityMngr->ClearDimensionSetAll();
+			--m_uOctantLevels;
+
+			SafeDelete(m_pRoot);
+			m_pRoot = new MyOctant(m_uOctantLevels, 5);
+
+		}
+		break;
 	}
+
 
 	for (int i = 0; i < 3; i++)
 		gui.io.MouseDown[i] = gui.m_bMousePressed[i];
@@ -80,7 +117,7 @@ void Application::ProcessKeyPressed(sf::Event a_event)
 		m_bModifier = true;
 		break;
 	}
-	
+
 	//gui
 	gui.io.KeysDown[a_event.key.code] = true;
 	gui.io.KeyCtrl = a_event.key.control;
@@ -393,7 +430,7 @@ void Application::CameraRotation(float a_fSpeed)
 
 
 	//m_pCameraMngr->ChangeYaw(fAngleY * 3.0f);
-		
+
 	//m_pCameraMngr->ChangePitch(-fAngleX * 3.0f);
 	//m_qCreeper = m_qCreeper * glm::angleAxis(fAngleY* 57.3f, AXIS_Y);
 
@@ -477,35 +514,35 @@ void Application::ProcessKeyboard(void)
 	}
 
 
-	if(count !=0)
-		m_qCreeper = glm::quat(vector3(0.0f, angle/count + cameraAngle, 0.0f));
+	if (count != 0)
+		m_qCreeper = glm::quat(vector3(0.0f, angle / count + cameraAngle, 0.0f));
 
 
 	//Orient the creeper
 	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::X))
 	{
-		if (m_bModifier)
-			m_qCreeper = m_qCreeper * glm::angleAxis(1.0f, AXIS_X);
-		else
-			m_qCreeper = m_qCreeper * glm::angleAxis(-1.0f, AXIS_X);
+	if (m_bModifier)
+	m_qCreeper = m_qCreeper * glm::angleAxis(1.0f, AXIS_X);
+	else
+	m_qCreeper = m_qCreeper * glm::angleAxis(-1.0f, AXIS_X);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y))
 	{
-		if (m_bModifier)
-			m_qCreeper = m_qCreeper * glm::angleAxis(1.0f, AXIS_Y);
-		else
-			m_qCreeper = m_qCreeper * glm::angleAxis(-1.0f, AXIS_Y);
+	if (m_bModifier)
+	m_qCreeper = m_qCreeper * glm::angleAxis(1.0f, AXIS_Y);
+	else
+	m_qCreeper = m_qCreeper * glm::angleAxis(-1.0f, AXIS_Y);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
 	{
-		if (m_bModifier)
-			m_qCreeper = m_qCreeper * glm::angleAxis(1.0f, AXIS_Z);
-		else
-			m_qCreeper = m_qCreeper * glm::angleAxis(-1.0f, AXIS_Z);
+	if (m_bModifier)
+	m_qCreeper = m_qCreeper * glm::angleAxis(1.0f, AXIS_Z);
+	else
+	m_qCreeper = m_qCreeper * glm::angleAxis(-1.0f, AXIS_Z);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 	{
-		m_qCreeper = quaternion();
+	m_qCreeper = quaternion();
 	}*/
 }
 //Joystick
