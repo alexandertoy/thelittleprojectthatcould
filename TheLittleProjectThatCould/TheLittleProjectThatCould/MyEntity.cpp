@@ -89,6 +89,14 @@ void Simplex::MyEntity::Release(void)
 	SafeDelete(m_pSolver);
 	m_IDMap.erase(m_sUniqueID);
 }
+bool Simplex::MyEntity::IsFalling()
+{
+	return m_pSolver->IsFalling();
+}
+void Simplex::MyEntity::Jump()
+{
+	m_pSolver->Jump();
+}
 //The big 3
 Simplex::MyEntity::MyEntity(String a_sFileName, Tag a_nTag, String a_sUniqueID)
 {
@@ -297,6 +305,8 @@ void Simplex::MyEntity::Update(void)
 	{
 		m_pSolver->Update();
 		SetModelMatrix(glm::translate(m_pSolver->GetPosition()));
+	}
+	else {
 	}
 }
 bool Simplex::MyEntity::ResolveCollision(MyEntity* a_pOther)

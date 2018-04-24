@@ -17,24 +17,29 @@ void Application::InitVariables(void)
 	m_pEntityMngr->AddEntity("Minecraft\\Creeper.obj", Tag::Player, "Creeper");
 	m_pEntityMngr->SetAxisVisibility(true, "Creeper"); //set visibility of the entity's axis
 	m_pEntityMngr->UsePhysicsSolver();
+	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0.0f, 0, 0.0f)));
 
 	for (int i = 0; i < 100; i++) {
 		//TODO make this work with the tree obj
 		m_pEntityMngr->AddEntity("Minecraft\\Steve.obj", Tag::Passenger, "Steve");
-		matrix4 mSteve = glm::translate(vector3(rand() % 100 - 50, 0, rand() % 100 - 50));
+		matrix4 mSteve = glm::translate(vector3(rand() % 99 - 50, 0, rand() % 99 - 50));
 		m_pEntityMngr->SetModelMatrix(mSteve);
-		m_pEntityMngr->UsePhysicsSolver();
+		//m_pEntityMngr->UsePhysicsSolver();
 	}
 
-	planeIdx = m_pMeshMngr->GeneratePlane(100.0f, vector3(0.0f, .5f, 0.0f));
-	planeMatrix = glm::translate(vector3(0.0f, 0.0f, 0.0f)) * ToMatrix4(glm::quat(vector3(-PI / 2.0f, 0.0f, 0.0f)));
+	m_pEntityMngr->AddEntity("Minecraft\\Cube.obj", Tag::Floor, "Ground");
+	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(-50.0f, -1.0f, -50.0f)) * glm::scale(vector3(100.0f, 1.0f, 100.0f)));
+
+
+	/*planeIdx = m_pMeshMngr->GeneratePlane(100.0f, vector3(0.0f, .5f, 0.0f));
+	planeMatrix = glm::translate(vector3(0.0f, 0.0f, 0.0f)) * ToMatrix4(glm::quat(vector3(-PI / 2.0f, 0.0f, 0.0f)));*/
 
 	vector3 creeperPos = m_pEntityMngr->GetRigidBody("Creeper")->GetCenterGlobal();
 	vector3 cameraPos = creeperPos + vector3(0, 2, -5);
 	creeperPos.y += 1;
 	m_pCameraMngr->SetPositionTargetAndUp(cameraPos, creeperPos, AXIS_Y);
 
-	m_uOctantLevels = 1;
+	m_uOctantLevels = 3;
 
 	m_pRoot = new MyOctant(m_uOctantLevels, 5);
 
@@ -45,9 +50,6 @@ void Application::Update(void)
 	//Update the system so it knows how much time has passed since the last call
 	m_pSystem->Update();
 
-	//Is the ArcBall active?
-	ArcBall();
-
 	//Is the first person camera active?
 	CameraRotation();
 
@@ -57,8 +59,9 @@ void Application::Update(void)
 	//update things for the creeper (rotation and dimensions)
 	matrix4 mCreeper = m_pEntityMngr->GetModelMatrix("Creeper") * ToMatrix4(m_qCreeper) * ToMatrix4(m_qArcBall);
 	m_pEntityMngr->SetModelMatrix(mCreeper, "Creeper");
-	m_pRoot->UpdateIdForEntity(m_pEntityMngr->GetEntityIndex("Creeper"));
+	m_pRoot->UpdateIdForEntity(0);
 
+	//m_pEntityMngr->SetModelMatrix(m_pEntityMngr->GetModelMatrix("Ground") * glm::scale(vector3(100.0f, 2.0f, 100.0f)), "Ground");
 
 	//rotate camera around creeper
 	vector3 creeperPos = m_pEntityMngr->GetRigidBody("Creeper")->GetCenterGlobal();

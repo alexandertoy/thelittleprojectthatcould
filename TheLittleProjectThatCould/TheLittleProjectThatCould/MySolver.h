@@ -21,8 +21,11 @@ namespace Simplex
 		vector3 m_v3Velocity = ZERO_V3; //Velocity of the MySolver
 		float m_fMass = 1.0f; //Mass of the solver
 		Tag m_eTag;
-		bool onGround = true;
+		bool m_bOnGround = false;
+		bool m_bJumping = false;
 	public:
+		bool IsFalling();
+		void Jump();
 		/*
 		USAGE: Constructor
 		ARGUMENTS: ---

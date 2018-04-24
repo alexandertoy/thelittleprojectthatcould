@@ -21,14 +21,7 @@ void Application::ProcessMousePressed(sf::Event a_event)
 	case sf::Mouse::Button::Left:
 		gui.m_bMousePressed[0] = true;
 		break;
-	case sf::Mouse::Button::Middle:
-		gui.m_bMousePressed[1] = true;
-		m_bArcBall = true;
-		break;
-	case sf::Mouse::Button::Right:
-		gui.m_bMousePressed[2] = true;
-		m_bFPC = true;
-		break;
+
 	}
 
 	for (int i = 0; i < 3; i++)
@@ -42,14 +35,7 @@ void Application::ProcessMouseReleased(sf::Event a_event)
 	case sf::Mouse::Button::Left:
 		gui.m_bMousePressed[0] = false;
 		break;
-	case sf::Mouse::Button::Middle:
-		gui.m_bMousePressed[1] = false;
-		m_bArcBall = false;
-		break;
-	case sf::Mouse::Button::Right:
-		gui.m_bMousePressed[2] = false;
-		m_bFPC = false;
-		break;
+
 	}
 
 
@@ -74,7 +60,7 @@ void Application::ProcessKeyPressed(sf::Event a_event)
 	{
 	default: break;
 	case sf::Keyboard::Space:
-		m_pEntityMngr->ApplyForce(vector3(0.0f, 1.0f, 0.0f), "Creeper");
+		m_pEntityMngr->Jump(0);
 		break;
 	case sf::Keyboard::LShift:
 	case sf::Keyboard::RShift:
@@ -95,20 +81,10 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 	{
 	default: break;
 	case sf::Keyboard::Escape:
-		m_bRunning = false;
+		m_bFPC =  !m_bFPC;
+
 		break;
-	case sf::Keyboard::F1:
-		m_pCameraMngr->SetCameraMode(CAM_PERSP);
-		break;
-	case sf::Keyboard::F2:
-		m_pCameraMngr->SetCameraMode(CAM_ORTHO_Z);
-		break;
-	case sf::Keyboard::F3:
-		m_pCameraMngr->SetCameraMode(CAM_ORTHO_Y);
-		break;
-	case sf::Keyboard::F4:
-		m_pCameraMngr->SetCameraMode(CAM_ORTHO_X);
-		break;
+
 	case sf::Keyboard::F:
 		bFPSControl = !bFPSControl;
 		m_pCameraMngr->SetFPS(bFPSControl);

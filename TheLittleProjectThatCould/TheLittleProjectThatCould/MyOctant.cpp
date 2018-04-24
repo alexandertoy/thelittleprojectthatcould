@@ -29,6 +29,7 @@ Simplex::MyOctant::MyOctant(uint a_nMaxLevel, uint a_nIdealEntityCount)
 		if (min.z < m_v3Min.z) m_v3Min.z = min.z;
 	}
 	m_v3Center = (m_v3Max + m_v3Min) / 2.0f;
+	m_v3Center.y -= 2.2f;
 	m_pRoot = this;
 	m_uChildren = 0;
 	m_uID = m_uOctantCount++;
@@ -253,7 +254,7 @@ void Simplex::MyOctant::AssignIDtoEntity(void)
 void Simplex::MyOctant::UpdateIdForEntity(uint id)
 {
 	MyEntity *entity = m_pEntityMngr->GetEntity(id);
-	entity->ClearCollisionList();
+	entity->ClearDimensionSet();
 	for (MyOctant* MyOctant : m_lChild) {
 		if (MyOctant->IsColliding(id)) {
 			m_pEntityMngr->AddDimension(id, MyOctant->m_uID);

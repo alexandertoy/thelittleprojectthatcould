@@ -19,6 +19,18 @@ void MySolver::Swap(MySolver& other)
 	std::swap(m_fMass, other.m_fMass);
 }
 void MySolver::Release(void) {/*nothing to deallocate*/ }
+bool Simplex::MySolver::IsFalling()
+{
+	return !m_bOnGround;
+}
+void Simplex::MySolver::Jump()
+{
+	if (!m_bJumping) {
+		m_bJumping = true;
+
+		ApplyForce(vector3(0.0f, 1.0f, 0.0f));
+	}
+}
 //The big 3
 MySolver::MySolver(Tag a_nTag) { 
 	Init(); 
@@ -93,46 +105,60 @@ vector3 RoundSmallVelocity(vector3 a_v3Velocity, float minVelocity = 0.01f)
 }
 void MySolver::Update(void)
 {
-	ApplyForce(GRAVITY);
-
+	//if(!m_bOnGround)
+		ApplyForce(GRAVITY);
 	m_v3Velocity += m_v3Acceleration;
 
 	float fMaxVelocity = 5.0f;
 	m_v3Velocity = CalculateMaxVelocity(m_v3Velocity, fMaxVelocity);
 
 	ApplyFriction(0.1f);
-	m_v3Velocity = RoundSmallVelocity(m_v3Velocity, 0.028f);
+	m_v3Velocity = RoundSmallVelocity(m_v3Velocity, 0.01f);
 
 	m_v3Position += m_v3Velocity;
 
-	if (m_v3Position.y <= 0)
-	{
-		m_v3Position.y = 0;
-		m_v3Velocity.y = 0;
-	}
+	//if (m_v3Position.y <= 0)
+	//{
+	//	m_v3Position.y = 0;
+	//	m_v3Velocity.y = 0;
+	//}
 
 	m_v3Acceleration = ZERO_V3;
+	m_bOnGround = false;
+
 }
 bool MySolver::ResolveCollision(MySolver* a_pOther)
 {
 	float fMagThis = glm::length(m_v3Velocity);
-	float fMagOther = glm::length(m_v3Velocity);
+	float fMagOther = glm::length(a_pOther->m_v3Velocity);
 
-	if (m_eTag == Tag::Player) {
+	if (a_pOther->m_eTag == Tag::Floor) {
+		if (!m_bOnGround) {
+			m_bOnGround = true;
+			vector3 temp = m_v3Velocity;
+			temp.x = 0;
+			temp.z = 0;
+			ApplyForce(-temp - GRAVITY);
+			m_bJumping = false;
+
+		}
+		
+	}
+	else if (m_eTag == Tag::Player) {
 		if (a_pOther->m_eTag == Tag::Passenger) {
 			ScoreManager::IncreaseScore(1);
 			return true;
 		}
-		else {
-			ApplyForce(-GRAVITY);
-		}
+
 	}
+	
+
 
 	else if (fMagThis > 0.015f || fMagOther > 0.015f)
 	{
-		a_pOther->ApplyForce(-GetVelocity());
-		ApplyForce(-m_v3Velocity);
-		a_pOther->ApplyForce(m_v3Velocity);
+		//a_pOther->ApplyForce(GetVelocity());
+		ApplyForce(-a_pOther->m_v3Velocity * a_pOther->m_fMass);
+		a_pOther->ApplyForce(m_v3Velocity * m_fMass);
 	}
 	else
 	{

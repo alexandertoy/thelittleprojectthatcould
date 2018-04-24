@@ -34,6 +34,8 @@ namespace Simplex
 		MySolver* m_pSolver = nullptr; //Physics MySolver
 
 	public:
+		bool IsFalling();
+		void Jump();
 		/*
 		Usage: Constructor that specifies the name attached to the MyEntity
 		Arguments:

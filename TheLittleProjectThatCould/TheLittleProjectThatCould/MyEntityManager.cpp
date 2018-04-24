@@ -17,6 +17,10 @@ void Simplex::MyEntityManager::Release(void)
 	m_uEntityCount = 0;
 	m_mEntityArray = nullptr;
 }
+void Simplex::MyEntityManager::Jump(uint idx)
+{
+	GetEntity(0)->Jump();
+}
 Simplex::MyEntityManager* Simplex::MyEntityManager::GetInstance()
 {
 	if (m_pInstance == nullptr)
@@ -183,7 +187,7 @@ void Simplex::MyEntityManager::Update(void)
 			//if objects are colliding resolve the collision
 			if (m_mEntityArray[i]->IsColliding(m_mEntityArray[j]))
 			{
-				if (m_mEntityArray[i]->ResolveCollision(m_mEntityArray[j]))
+				if (m_mEntityArray[i]->ResolveCollision(m_mEntityArray[j]) && i == 0)
 					remove.push_back(j);
 			}
 		}
@@ -191,6 +195,7 @@ void Simplex::MyEntityManager::Update(void)
 		m_mEntityArray[i]->Update();
 	}
 	for (uint i : remove) {
+		std::cout << i << std::endl;
 		RemoveEntity(i);
 	}
 
