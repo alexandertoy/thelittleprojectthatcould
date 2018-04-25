@@ -9,6 +9,32 @@ Date: 2017/06
 
 namespace Simplex
 {
+	/*
+	enum eSATResults
+	{
+		SAT_NONE = 0,
+
+		SAT_AX,
+		SAT_AY,
+		SAT_AZ,
+
+		SAT_BX,
+		SAT_BY,
+		SAT_BZ,
+
+		SAT_AXxBX,
+		SAT_AXxBY,
+		SAT_AXxBZ,
+
+		SAT_AYxBX,
+		SAT_AYxBY,
+		SAT_AYxBZ,
+
+		SAT_AZxBX,
+		SAT_AZxBY,
+		SAT_AZxBZ,
+	};
+	*/
 
 	//System Class
 	class MyRigidBody

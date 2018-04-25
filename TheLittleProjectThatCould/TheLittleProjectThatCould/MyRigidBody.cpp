@@ -279,11 +279,97 @@ void MyRigidBody::ClearCollidingList(void)
 }
 uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 {
-	// Since no separating axis found, the OBBs must be intersecting
 	/*
-	This is not complete as this is the solution of an assignment
+	float radiusUs, radiusThem;
+	matrix3 RotationThemToUs, AbsRotationThemToUs;
+
+	vector3 OurLocalAxis[3], TheirLocalAxis[3];
+	OurLocalAxis[0] = matrix3(m_m4ToWorld) * AXIS_X;
+	OurLocalAxis[1] = matrix3(m_m4ToWorld) * AXIS_Y;
+	OurLocalAxis[2] = matrix3(m_m4ToWorld) * AXIS_Z;
+
+	TheirLocalAxis[0] = matrix3(other->m_m4ToWorld) * AXIS_X;
+	TheirLocalAxis[1] = matrix3(other->m_m4ToWorld) * AXIS_Y;
+	TheirLocalAxis[2] = matrix3(other->m_m4ToWorld) * AXIS_Z;
+
+	//compute rotation matrix expressing b in a's coordinate frame
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			RotationThemToUs[i][j] = glm::dot(OurLocalAxis[i], TheirLocalAxis[j]);
+
+	//compute translation vector t
+	vector3 TranslateUsToThem = other->GetCenterGlobal() - this->GetCenterGlobal();
+	TranslateUsToThem = vector3(glm::dot(TranslateUsToThem, OurLocalAxis[0]), glm::dot(TranslateUsToThem, OurLocalAxis[1]), glm::dot(TranslateUsToThem, OurLocalAxis[2]));
+
+	//compute common subexpressions, add in an epsilon term to
+	//counteract artihmetic errors when two edges are parallel and
+	//their cross product is (near) null
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			AbsRotationThemToUs[i][j] = abs(RotationThemToUs[i][j]) + glm::epsilon<float>();
+
+	//test axes L = a0, L = A1, L = A2
+	for (int i = 0; i < 3; i++) {
+		radiusUs = m_v3HalfWidth[i];
+		radiusThem = other->m_v3HalfWidth[0] * AbsRotationThemToUs[i][0] + other->m_v3HalfWidth[1] * AbsRotationThemToUs[i][1] + other->m_v3HalfWidth[2] * AbsRotationThemToUs[i][2];
+		if (abs(TranslateUsToThem[i]) > radiusUs + radiusThem) return (eSATResults::SAT_AX + i);
+	}
+
+	//test axes L = B0, L = B1, L = B2
+	for (int i = 0; i < 3; i++) {
+		radiusUs = m_v3HalfWidth[0] * AbsRotationThemToUs[0][i] + m_v3HalfWidth[1] * AbsRotationThemToUs[1][i] + m_v3HalfWidth[2] * AbsRotationThemToUs[2][i];
+		radiusThem = other->m_v3HalfWidth[i];
+		if (abs(TranslateUsToThem[0] * RotationThemToUs[0][i] + TranslateUsToThem[1] * RotationThemToUs[1][i] + TranslateUsToThem[2] * RotationThemToUs[2][i]) > radiusUs + radiusThem) return (eSATResults::SAT_BX + i);
+	}
+
+	// Test axis L = A0 x B0
+	radiusUs = m_v3HalfWidth[1] * AbsRotationThemToUs[2][0] + m_v3HalfWidth[2] * AbsRotationThemToUs[1][0];
+	radiusThem = other->m_v3HalfWidth[1] * AbsRotationThemToUs[0][2] + other->m_v3HalfWidth[2] * AbsRotationThemToUs[0][1];
+	if (abs(TranslateUsToThem[2] * RotationThemToUs[1][0] - TranslateUsToThem[1] * RotationThemToUs[2][0]) > radiusUs + radiusThem) return eSATResults::SAT_AXxBX;
+
+	// Test axis L = A0 x B1
+	radiusUs = m_v3HalfWidth[1] * AbsRotationThemToUs[2][1] + m_v3HalfWidth[2] * AbsRotationThemToUs[1][1];
+	radiusThem = other->m_v3HalfWidth[0] * AbsRotationThemToUs[0][2] + other->m_v3HalfWidth[2] * AbsRotationThemToUs[0][0];
+	if (abs(TranslateUsToThem[2] * RotationThemToUs[1][1] - TranslateUsToThem[1] * RotationThemToUs[2][1]) > radiusUs + radiusThem) return eSATResults::SAT_AXxBY;
+
+	// Test axis L = A0 x B2
+	radiusUs = m_v3HalfWidth[1] * AbsRotationThemToUs[2][2] + m_v3HalfWidth[2] * AbsRotationThemToUs[1][2];
+	radiusThem = other->m_v3HalfWidth[0] * AbsRotationThemToUs[0][1] + other->m_v3HalfWidth[1] * AbsRotationThemToUs[0][0];
+	if (abs(TranslateUsToThem[2] * RotationThemToUs[1][2] - TranslateUsToThem[1] * RotationThemToUs[2][2]) > radiusUs + radiusThem) return eSATResults::SAT_AXxBZ;
+
+	// Test axis L = A1 x B0
+	radiusUs = m_v3HalfWidth[0] * AbsRotationThemToUs[2][0] + m_v3HalfWidth[2] * AbsRotationThemToUs[0][0];
+	radiusThem = other->m_v3HalfWidth[1] * AbsRotationThemToUs[1][2] + other->m_v3HalfWidth[2] * AbsRotationThemToUs[1][1];
+	if (abs(TranslateUsToThem[0] * RotationThemToUs[2][0] - TranslateUsToThem[2] * RotationThemToUs[0][0]) > radiusUs + radiusThem) return eSATResults::SAT_AYxBX;
+
+	// Test axis L = A1 x B1
+	radiusUs = m_v3HalfWidth[0] * AbsRotationThemToUs[2][1] + m_v3HalfWidth[2] * AbsRotationThemToUs[0][1];
+	radiusThem = other->m_v3HalfWidth[0] * AbsRotationThemToUs[1][2] + other->m_v3HalfWidth[2] * AbsRotationThemToUs[1][0];
+	if (abs(TranslateUsToThem[0] * RotationThemToUs[2][1] - TranslateUsToThem[2] * RotationThemToUs[0][1]) > radiusUs + radiusThem) return eSATResults::SAT_AYxBY;
+
+	// Test axis L = A1 x B2
+	radiusUs = m_v3HalfWidth[0] * AbsRotationThemToUs[2][2] + m_v3HalfWidth[2] * AbsRotationThemToUs[0][2];
+	radiusThem = other->m_v3HalfWidth[0] * AbsRotationThemToUs[1][1] + other->m_v3HalfWidth[1] * AbsRotationThemToUs[1][0];
+	if (abs(TranslateUsToThem[0] * RotationThemToUs[2][2] - TranslateUsToThem[2] * RotationThemToUs[0][2]) > radiusUs + radiusThem) return eSATResults::SAT_AYxBZ;
+
+	// Test axis L = A2 x B0
+	radiusUs = m_v3HalfWidth[0] * AbsRotationThemToUs[1][0] + m_v3HalfWidth[1] * AbsRotationThemToUs[0][0];
+	radiusThem = other->m_v3HalfWidth[1] * AbsRotationThemToUs[2][2] + other->m_v3HalfWidth[2] * AbsRotationThemToUs[2][1];
+	if (abs(TranslateUsToThem[1] * RotationThemToUs[0][0] - TranslateUsToThem[0] * RotationThemToUs[1][0]) > radiusUs + radiusThem) return eSATResults::SAT_AZxBX;
+
+	// Test axis L = A2 x B1
+	radiusUs = m_v3HalfWidth[0] * AbsRotationThemToUs[1][1] + m_v3HalfWidth[1] * AbsRotationThemToUs[0][1];
+	radiusThem = other->m_v3HalfWidth[0] * AbsRotationThemToUs[2][2] + other->m_v3HalfWidth[2] * AbsRotationThemToUs[2][0];
+	if (abs(TranslateUsToThem[1] * RotationThemToUs[0][1] - TranslateUsToThem[0] * RotationThemToUs[1][1]) > radiusUs + radiusThem) return eSATResults::SAT_AZxBY;
+
+	// Test axis L = A2 x B2
+	radiusUs = m_v3HalfWidth[0] * AbsRotationThemToUs[1][2] + m_v3HalfWidth[1] * AbsRotationThemToUs[0][2];
+	radiusThem = other->m_v3HalfWidth[0] * AbsRotationThemToUs[2][1] + other->m_v3HalfWidth[1] * AbsRotationThemToUs[2][0];
+	if (abs(TranslateUsToThem[1] * RotationThemToUs[0][2] - TranslateUsToThem[0] * RotationThemToUs[1][2]) > radiusUs + radiusThem) return eSATResults::SAT_AZxBZ;
+
+	//there is no axis test that separates this two objects
+	return eSATResults::SAT_NONE; 
 	*/
-	return 0;
 }
 bool MyRigidBody::IsColliding(MyRigidBody* const other)
 {
