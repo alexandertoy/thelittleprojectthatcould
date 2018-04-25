@@ -14,7 +14,7 @@ Date: 2017/06
 #include "SFML\Audio.hpp"
 
 namespace Simplex {
-	enum Tag { Player, Passenger, Floor };
+	enum Tag { Player, Passenger, Floor, Obstacle };
 }
 
 #endif //__DEFINITIONS_H_

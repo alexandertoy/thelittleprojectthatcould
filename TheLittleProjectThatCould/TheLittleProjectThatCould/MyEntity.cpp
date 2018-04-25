@@ -231,6 +231,13 @@ void Simplex::MyEntity::RemoveDimension(uint a_uDimension)
 }
 void Simplex::MyEntity::ClearDimensionSet(void)
 {
+	//static bool once = true;
+	//if (once && m_sUniqueID == "Creeper") {
+	//	for (int i = 0; i < m_nDimensionCount; i++) {
+	//		std::cout << m_DimensionArray[i] << std::endl;
+	//	}
+	//	once = false;
+	//}
 	if (m_DimensionArray)
 	{
 		delete[] m_DimensionArray;
@@ -266,6 +273,7 @@ bool Simplex::MyEntity::SharesDimension(MyEntity* const a_pOther)
 	{
 		for (uint j = 0; j < a_pOther->m_nDimensionCount; j++)
 		{
+
 			if (m_DimensionArray[i] == a_pOther->m_DimensionArray[j])
 				return true; //as soon as we find one we know they share dimensionality
 		}
@@ -282,8 +290,8 @@ bool Simplex::MyEntity::IsColliding(MyEntity* const other)
 
 	//if the entities are not living in the same dimension
 	//they are not colliding
-	if (!SharesDimension(other))
-		return false;
+	//if (!SharesDimension(other))
+	//	return false;
 
 	return m_pRigidBody->IsColliding(other->GetRigidBody());
 }
@@ -316,6 +324,7 @@ bool Simplex::MyEntity::ResolveCollision(MyEntity* a_pOther)
 		return m_pSolver->ResolveCollision(a_pOther->GetSolver());
 
 	}
+	return false;
 }
 void Simplex::MyEntity::UsePhysicsSolver(bool a_bUse)
 {

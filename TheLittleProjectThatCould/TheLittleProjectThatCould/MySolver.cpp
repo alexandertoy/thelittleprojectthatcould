@@ -117,11 +117,6 @@ void MySolver::Update(void)
 
 	m_v3Position += m_v3Velocity;
 
-	//if (m_v3Position.y <= 0)
-	//{
-	//	m_v3Position.y = 0;
-	//	m_v3Velocity.y = 0;
-	//}
 
 	m_v3Acceleration = ZERO_V3;
 	m_bOnGround = false;
@@ -131,6 +126,9 @@ bool MySolver::ResolveCollision(MySolver* a_pOther)
 {
 	float fMagThis = glm::length(m_v3Velocity);
 	float fMagOther = glm::length(a_pOther->m_v3Velocity);
+	
+	bool removeOther = false;
+
 
 	if (a_pOther->m_eTag == Tag::Floor) {
 		if (!m_bOnGround) {
@@ -138,7 +136,7 @@ bool MySolver::ResolveCollision(MySolver* a_pOther)
 			vector3 temp = m_v3Velocity;
 			temp.x = 0;
 			temp.z = 0;
-			ApplyForce(-temp - GRAVITY);
+			ApplyForce(-temp * 1.1f - GRAVITY);
 			m_bJumping = false;
 
 		}
@@ -147,18 +145,29 @@ bool MySolver::ResolveCollision(MySolver* a_pOther)
 	else if (m_eTag == Tag::Player) {
 		if (a_pOther->m_eTag == Tag::Passenger) {
 			ScoreManager::IncreaseScore(1);
-			return true;
+			removeOther = true;
+		}
+		if (a_pOther->m_eTag == Tag::Obstacle) {
+			vector3 temp = -m_v3Velocity * a_pOther->m_fMass;
+			if (glm::length(temp) < .15) {
+				vector3 v3Direction = m_v3Position - a_pOther->m_v3Position;
+				if (glm::length(v3Direction) != 0)
+					v3Direction = glm::normalize(v3Direction);
+				v3Direction *= .05f;
+				ApplyForce(v3Direction);
+				a_pOther->ApplyForce(-v3Direction);
+			}
+			else 
+				ApplyForce(temp);
 		}
 
 	}
 	
 
-
 	else if (fMagThis > 0.015f || fMagOther > 0.015f)
 	{
 		//a_pOther->ApplyForce(GetVelocity());
-		ApplyForce(-a_pOther->m_v3Velocity * a_pOther->m_fMass);
-		a_pOther->ApplyForce(m_v3Velocity * m_fMass);
+
 	}
 	else
 	{
@@ -169,5 +178,5 @@ bool MySolver::ResolveCollision(MySolver* a_pOther)
 		ApplyForce(v3Direction);
 		a_pOther->ApplyForce(-v3Direction);
 	}
-	return false;
+	return removeOther;
 }

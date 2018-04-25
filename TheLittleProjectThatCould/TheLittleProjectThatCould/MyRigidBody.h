@@ -5,36 +5,36 @@ Date: 2017/06
 #ifndef __MYRIGIDBODY_H_
 #define __MYRIGIDBODY_H_
 
-#include "Simplex\Mesh\Model.h"
+#include "Simplex\Simplex.h"
 
 namespace Simplex
 {
-	/*
-	enum eSATResults
-	{
-		SAT_NONE = 0,
+	
+	//enum eSATResults
+	//{
+	//	SAT_NONE = 0,
 
-		SAT_AX,
-		SAT_AY,
-		SAT_AZ,
+	//	SAT_AX,
+	//	SAT_AY,
+	//	SAT_AZ,
 
-		SAT_BX,
-		SAT_BY,
-		SAT_BZ,
+	//	SAT_BX,
+	//	SAT_BY,
+	//	SAT_BZ,
 
-		SAT_AXxBX,
-		SAT_AXxBY,
-		SAT_AXxBZ,
+	//	SAT_AXxBX,
+	//	SAT_AXxBY,
+	//	SAT_AXxBZ,
 
-		SAT_AYxBX,
-		SAT_AYxBY,
-		SAT_AYxBZ,
+	//	SAT_AYxBX,
+	//	SAT_AYxBY,
+	//	SAT_AYxBZ,
 
-		SAT_AZxBX,
-		SAT_AZxBY,
-		SAT_AZxBZ,
-	};
-	*/
+	//	SAT_AZxBX,
+	//	SAT_AZxBY,
+	//	SAT_AZxBZ,
+	//};
+	//
 
 	//System Class
 	class MyRigidBody

@@ -28,6 +28,8 @@ class Application
 	uint m_uObjects = 0; //Number of objects in the scene
 	uint m_uOctantLevels = 0; //Number of levels in the octree
 	MyOctant* m_pRoot = nullptr;//Root of the octree
+
+	bool m_bOctree_GUI = false;
 		
 private:
 	String m_sTeamName = "Alberto's A-Plus Students"; //programmer

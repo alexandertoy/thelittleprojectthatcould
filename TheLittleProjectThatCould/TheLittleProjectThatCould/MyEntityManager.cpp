@@ -187,15 +187,16 @@ void Simplex::MyEntityManager::Update(void)
 			//if objects are colliding resolve the collision
 			if (m_mEntityArray[i]->IsColliding(m_mEntityArray[j]))
 			{
-				if (m_mEntityArray[i]->ResolveCollision(m_mEntityArray[j]) && i == 0)
-					remove.push_back(j);
+				if (m_mEntityArray[i]->ResolveCollision(m_mEntityArray[j])) {
+					if (i == 0)
+						remove.push_back(j);
+				}
 			}
 		}
 		//Update each entity
 		m_mEntityArray[i]->Update();
 	}
 	for (uint i : remove) {
-		std::cout << i << std::endl;
 		RemoveEntity(i);
 	}
 

@@ -157,6 +157,8 @@ void Application::DrawGUI(void)
 				ImGui::GetIO().Framerate, 1000.0f / ImGui::GetIO().Framerate);
 			ImGui::Text("Control:\n");
 			ImGui::Text("   WASD: Movement\n");
+			ImGui::Text("   R	: Reset\n");
+			ImGui::Text("   T	: Toggle Debug Info\n");
 			ImGui::Separator();
 			ImGui::Separator();
 			ImGui::TextColored(ImColor(255, 255, 0), "Entity Manager\n");

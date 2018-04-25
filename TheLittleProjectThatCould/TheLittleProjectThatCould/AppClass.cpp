@@ -12,29 +12,45 @@ void Application::InitVariables(void)
 
 															  //Entity Manager
 	m_pEntityMngr = MyEntityManager::GetInstance();
+	uint temp = m_pEntityMngr->GetEntityCount();
+	for (uint i = 0; i < temp; i++) {
+		m_pEntityMngr->RemoveEntity(i);
+	}
+	
+	
+	ScoreManager::ResetScore();
 
 	//creeper
 	m_pEntityMngr->AddEntity("Minecraft\\Creeper.obj", Tag::Player, "Creeper");
-	m_pEntityMngr->SetAxisVisibility(true, "Creeper"); //set visibility of the entity's axis
+	//m_pEntityMngr->SetAxisVisibility(true, "Creeper"); //set visibility of the entity's axis
 	m_pEntityMngr->UsePhysicsSolver();
-	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0.0f, 0, 0.0f)));
+	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0.0f, 2.0f, 0.0f)));
 
 	for (int i = 0; i < 100; i++) {
 		//TODO make this work with the tree obj
+		m_pEntityMngr->AddEntity("Mario\\WarpPipe.obj", Tag::Obstacle, "Tree");
+		matrix4 mSteve = glm::translate(vector3(rand() % 200 - 100, 0.0f, rand() % 200 - 100)) * glm::scale(vector3(.5f, 1.0f, .5f));
+		m_pEntityMngr->SetMass(2.0f);
+		m_pEntityMngr->SetModelMatrix(mSteve);
+		//m_pEntityMngr->UsePhysicsSolver();
+	}
+
+	for (int i = 0; i < 400; i++) {
+		//TODO make this work with the tree obj
 		m_pEntityMngr->AddEntity("Minecraft\\Steve.obj", Tag::Passenger, "Steve");
-		matrix4 mSteve = glm::translate(vector3(rand() % 99 - 50, 0, rand() % 99 - 50));
+		matrix4 mSteve = glm::translate(vector3(rand() % 200 - 100, 0.0f, rand() % 200 - 100));
+		m_pEntityMngr->SetMass(2.0f);
 		m_pEntityMngr->SetModelMatrix(mSteve);
 		//m_pEntityMngr->UsePhysicsSolver();
 	}
 
 	m_pEntityMngr->AddEntity("Minecraft\\Cube.obj", Tag::Floor, "Ground");
-	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(-50.0f, -1.0f, -50.0f)) * glm::scale(vector3(100.0f, 1.0f, 100.0f)));
+	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(-100.0f, -1.0f, -100.0f)) * glm::scale(vector3(200.0f, 1.0f, 200.0f)));
+	MyRigidBody* rb = m_pEntityMngr->GetRigidBody();
 
 
-	/*planeIdx = m_pMeshMngr->GeneratePlane(100.0f, vector3(0.0f, .5f, 0.0f));
-	planeMatrix = glm::translate(vector3(0.0f, 0.0f, 0.0f)) * ToMatrix4(glm::quat(vector3(-PI / 2.0f, 0.0f, 0.0f)));*/
 
-	vector3 creeperPos = m_pEntityMngr->GetRigidBody("Creeper")->GetCenterGlobal();
+	vector3 creeperPos = m_pEntityMngr->GetRigidBody(0)->GetCenterGlobal();
 	vector3 cameraPos = creeperPos + vector3(0, 2, -5);
 	creeperPos.y += 1;
 	m_pCameraMngr->SetPositionTargetAndUp(cameraPos, creeperPos, AXIS_Y);
@@ -53,18 +69,29 @@ void Application::Update(void)
 	//Is the first person camera active?
 	CameraRotation();
 
+	static uint nClock = m_pSystem->GenClock();
+	static bool bStarted = false;
+	if (m_pSystem->IsTimerDone(nClock) || !bStarted)
+	{
+		bStarted = true;
+		m_pSystem->StartTimerOnClock(0.5, nClock);
+		SafeDelete(m_pRoot);
+		m_pRoot = new MyOctant(m_uOctantLevels, 5);
+	}
+	
+
 	//Update Entity Manager
 	m_pEntityMngr->Update();
 
 	//update things for the creeper (rotation and dimensions)
-	matrix4 mCreeper = m_pEntityMngr->GetModelMatrix("Creeper") * ToMatrix4(m_qCreeper) * ToMatrix4(m_qArcBall);
-	m_pEntityMngr->SetModelMatrix(mCreeper, "Creeper");
+	matrix4 mCreeper = m_pEntityMngr->GetModelMatrix(0) * ToMatrix4(m_qCreeper) * ToMatrix4(m_qArcBall);
+	m_pEntityMngr->SetModelMatrix(mCreeper, 0);
 	m_pRoot->UpdateIdForEntity(0);
 
 	//m_pEntityMngr->SetModelMatrix(m_pEntityMngr->GetModelMatrix("Ground") * glm::scale(vector3(100.0f, 2.0f, 100.0f)), "Ground");
 
 	//rotate camera around creeper
-	vector3 creeperPos = m_pEntityMngr->GetRigidBody("Creeper")->GetCenterGlobal();
+	vector3 creeperPos = m_pEntityMngr->GetRigidBody(0)->GetCenterGlobal();
 	float x = sin(cameraAngle);
 	float y = cos(cameraAngle);
 	vector3 cameraPos = creeperPos + vector3(-5 * (x), 2, -5 * (y));
@@ -72,7 +99,7 @@ void Application::Update(void)
 	m_pCameraMngr->SetPositionTargetAndUp(cameraPos, creeperPos, AXIS_Y);
 
 	//Add objects to render list
-	m_pEntityMngr->AddEntityToRenderList(-1, true);
+	m_pEntityMngr->AddEntityToRenderList(-1, m_bOctree_GUI);
 	m_pMeshMngr->AddMeshToRenderList(m_pMeshMngr->GetMesh(planeIdx), planeMatrix);
 
 
@@ -83,10 +110,8 @@ void Application::Display(void)
 	// Clear the screen
 	ClearScreen();
 
-	if (m_uOctantID == -1)
+	if (m_bOctree_GUI)
 		m_pRoot->Display();
-	else
-		m_pRoot->Display(m_uOctantID);
 
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();

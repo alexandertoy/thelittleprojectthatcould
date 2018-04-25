@@ -66,6 +66,12 @@ void Application::ProcessKeyPressed(sf::Event a_event)
 	case sf::Keyboard::RShift:
 		m_bModifier = true;
 		break;
+	case sf::Keyboard::R:
+		InitVariables();
+		break;
+	case sf::Keyboard::T:
+		m_bOctree_GUI = !m_bOctree_GUI;
+		break;
 	}
 
 	//gui
@@ -378,12 +384,6 @@ void Application::CameraRotation(float a_fSpeed)
 	//Change the Yaw and the Pitch of the camera
 	cameraAngle += fAngleY;
 
-
-	//m_pCameraMngr->ChangeYaw(fAngleY * 3.0f);
-
-	//m_pCameraMngr->ChangePitch(-fAngleX * 3.0f);
-	//m_qCreeper = m_qCreeper * glm::angleAxis(fAngleY* 57.3f, AXIS_Y);
-
 	SetCursorPos(CenterX, CenterY);//Position the mouse in the center
 }
 //Keyboard
@@ -467,7 +467,7 @@ void Application::ProcessKeyboard(void)
 
 
 	if (count != 0) {
-		m_pEntityMngr->ApplyForce(force * fDelta, "Creeper");
+		m_pEntityMngr->ApplyForce(force * fDelta, 0);
 		m_qCreeper = glm::quat(vector3(0.0f, angle / count + cameraAngle, 0.0f));
 	}
 
