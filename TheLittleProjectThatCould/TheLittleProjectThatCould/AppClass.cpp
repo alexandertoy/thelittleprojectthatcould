@@ -14,7 +14,7 @@ void Application::InitVariables(void)
 	m_pEntityMngr = MyEntityManager::GetInstance();
 
 	//creeper
-	m_pEntityMngr->AddEntity("Minecraft\\Creeper.obj", Tag::Player, "Creeper");
+	m_pEntityMngr->AddEntity("Minecraft\\train2.obj", Tag::Player, "Creeper");
 	m_pEntityMngr->SetAxisVisibility(true, "Creeper"); //set visibility of the entity's axis
 	m_pEntityMngr->UsePhysicsSolver();
 	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0.0f, 0, 0.0f)));
@@ -24,6 +24,14 @@ void Application::InitVariables(void)
 		m_pEntityMngr->AddEntity("Minecraft\\Steve.obj", Tag::Passenger, "Steve");
 		matrix4 mSteve = glm::translate(vector3(rand() % 99 - 50, 0, rand() % 99 - 50));
 		m_pEntityMngr->SetModelMatrix(mSteve);
+		//m_pEntityMngr->UsePhysicsSolver();
+	}
+
+	for (int i = 0; i < 100; i++) {
+		//TODO make this work with the tree obj
+		m_pEntityMngr->AddEntity("Minecraft\\evergreen.obj", Tag::Passenger, "Tree");
+		matrix4 mTree = glm::translate(vector3(rand() % 99 - 50, 0, rand() % 99 - 50));
+		m_pEntityMngr->SetModelMatrix(mTree);
 		//m_pEntityMngr->UsePhysicsSolver();
 	}
 

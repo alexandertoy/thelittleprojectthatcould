@@ -370,6 +370,8 @@ uint MyRigidBody::SAT(MyRigidBody* const a_pOther)
 	//there is no axis test that separates this two objects
 	return eSATResults::SAT_NONE; 
 	*/
+	uint test = 1;
+	return test;
 }
 bool MyRigidBody::IsColliding(MyRigidBody* const other)
 {
