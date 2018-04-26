@@ -14,7 +14,7 @@ namespace Simplex {
 		~ScoreManager();
 	public:
 		static uint GetScore();
-		static void IncreaseScore(uint amount);
+		static void IncreaseScore(int amount);
 		static void ResetScore();
 	};
 

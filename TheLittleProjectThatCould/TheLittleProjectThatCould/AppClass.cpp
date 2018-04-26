@@ -21,19 +21,12 @@ void Application::InitVariables(void)
 	ScoreManager::ResetScore();
 
 	//creeper
-	m_pEntityMngr->AddEntity("Minecraft\\Creeper.obj", Tag::Player, "Creeper");
-	//m_pEntityMngr->SetAxisVisibility(true, "Creeper"); //set visibility of the entity's axis
+	m_pEntityMngr->AddEntity("Minecraft\\train2.obj", Tag::Player, "Creeper");
+	m_pEntityMngr->SetAxisVisibility(true, "Creeper"); //set visibility of the entity's axis
 	m_pEntityMngr->UsePhysicsSolver();
 	m_pEntityMngr->SetModelMatrix(glm::translate(vector3(0.0f, 2.0f, 0.0f)));
 
-	for (int i = 0; i < 100; i++) {
-		//TODO make this work with the tree obj
-		m_pEntityMngr->AddEntity("Mario\\WarpPipe.obj", Tag::Obstacle, "Tree");
-		matrix4 mSteve = glm::translate(vector3(rand() % 200 - 100, 0.0f, rand() % 200 - 100)) * glm::scale(vector3(.5f, 1.0f, .5f));
-		m_pEntityMngr->SetMass(2.0f);
-		m_pEntityMngr->SetModelMatrix(mSteve);
-		//m_pEntityMngr->UsePhysicsSolver();
-	}
+
 
 	for (int i = 0; i < 400; i++) {
 		//TODO make this work with the tree obj
@@ -41,6 +34,16 @@ void Application::InitVariables(void)
 		matrix4 mSteve = glm::translate(vector3(rand() % 200 - 100, 0.0f, rand() % 200 - 100));
 		m_pEntityMngr->SetMass(2.0f);
 		m_pEntityMngr->SetModelMatrix(mSteve);
+		//m_pEntityMngr->UsePhysicsSolver();
+	}
+
+	for (int i = 0; i < 200; i++) {
+		//TODO make this work with the tree obj
+		m_pEntityMngr->AddEntity("Minecraft\\evergreen.obj", Tag::Obstacle, "Tree");
+		matrix4 mTree = glm::translate(vector3(rand() % 200 - 100, 0, rand() % 200 - 100)) * glm::scale(vector3(.5f, 1.0f, .5f));
+		m_pEntityMngr->SetModelMatrix(mTree);
+		m_pEntityMngr->SetMass(2.0f);
+
 		//m_pEntityMngr->UsePhysicsSolver();
 	}
 

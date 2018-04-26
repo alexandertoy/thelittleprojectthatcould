@@ -19,7 +19,7 @@ uint ScoreManager::GetScore()
 	return m_uScore;
 }
 
-void ScoreManager::IncreaseScore(uint amount)
+void ScoreManager::IncreaseScore(int amount)
 {
 	m_uScore += amount;
 }
