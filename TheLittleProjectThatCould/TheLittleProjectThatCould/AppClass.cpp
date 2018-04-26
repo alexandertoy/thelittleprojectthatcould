@@ -29,7 +29,7 @@ void Application::InitVariables(void)
 
 	for (int i = 0; i < 100; i++) {
 		//TODO make this work with the tree obj
-		m_pEntityMngr->AddEntity("Minecraft\\evergreen.obj", Tag::Passenger, "Tree");
+		m_pEntityMngr->AddEntity("Minecraft\\evergreen.obj", Tag::Obstacle, "Tree");
 		matrix4 mTree = glm::translate(vector3(rand() % 99 - 50, 0, rand() % 99 - 50));
 		m_pEntityMngr->SetModelMatrix(mTree);
 		//m_pEntityMngr->UsePhysicsSolver();
